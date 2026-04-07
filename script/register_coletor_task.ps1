@@ -1,0 +1,13 @@
+$taskName = 'ColetorImpressora'
+$scriptPath = Join-Path $PSScriptRoot 'run_coletor.bat'
+$action = "cmd.exe /c `"$scriptPath`""
+
+Write-Host "Registrando tarefa agendada: $taskName"
+
+schtasks /Create /TN $taskName /TR $action /SC WEEKLY /D FRI /ST 16:00 /F /RL HIGHEST /RU SYSTEM
+
+if ($LASTEXITCODE -eq 0) {
+    Write-Host "Tarefa criada com sucesso. Ela executará toda sexta-feira às 16:00."
+} else {
+    Write-Error "Falha ao criar a tarefa. Código: $LASTEXITCODE"
+}
