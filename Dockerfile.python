@@ -1,0 +1,9 @@
+FROM python:3.11-slim
+
+WORKDIR /app
+
+COPY script/ ./script/
+
+RUN pip install --no-cache-dir pysnmp==4.4.12 pyasn1==0.4.8 requests
+
+CMD ["python", "script/coletor.py"]
