@@ -5,14 +5,15 @@ O Contador de Impressão foi desenvolvido para auxiliar no controle da quantidad
 O projeto utiliza Docker, permitindo que qualquer pessoa execute o sistema sem precisar configurar manualmente o ambiente.
 
  Funcionalidades
- Registro de impressões
- Contador acumulado
- Organização de dados
- Ambiente isolado com Docker
- Fácil execução e setup rápido
- Tecnologias utilizadas
+Registro de impressões
+Contador acumulado
+Organização de dados
+Ambiente isolado com Docker
+Fácil execução e setup rápido
+Tecnologias utilizadas
 PHP / Laravel (ajuste se precisar)
 MySQL (ou outro banco, se usar)
+
 Docker
 Docker Compose
  Rodando com Docker
@@ -28,7 +29,9 @@ Suba os containers:
 docker-compose up -d
 Acesse no navegador:
 http://localhost
-🛠️ Comandos úteis
+
+
+Comandos úteis
 
 Parar containers:
 
