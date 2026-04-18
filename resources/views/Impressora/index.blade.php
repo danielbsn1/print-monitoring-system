@@ -19,8 +19,8 @@
                     <th>Modelo</th>
                     <th>Serie</th>
                     <th>IP</th>
-                    <th>Contador Atual</th>
                     <th>Contador Anterior</th>
+                     <th>Contador Atual</th>
                     <th>Consumo</th>
                 </tr>
             </thead>
@@ -32,8 +32,8 @@
                         <td>{{ $impressora->modelo }}</td>
                         <td>{{ $impressora->serie }}</td>
                         <td>{{ $impressora->ip }}</td>
-                        <td>{{ $impressora->contador_atual ?? '-' }}</td>
                         <td>{{ $impressora->contador_anterior ?? '-' }}</td>
+                        <td>{{ $impressora->contador_atual ?? '-' }}</td>
                         <td>{{ $impressora->consumo }} pagina(s)</td>
                     </tr>
                 @endforeach
