@@ -1,47 +1,65 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <title>Status do Coletor</title>
-    <style>
-        body { font-family: Arial, sans-serif; margin: 24px; }
-        .card { background: #fff; border: 1px solid #ddd; padding: 18px; margin-bottom: 16px; border-radius: 6px; }
-        pre { background: #f4f4f4; border: 1px solid #ccc; padding: 16px; overflow-x: auto; white-space: pre-wrap; word-break: break-word; }
-        .notice { margin: 16px 0; padding: 12px; background: #eef6ff; border: 1px solid #b8d6ff; }
-        .status-ok { color: #0a7a07; }
-        .status-error { color: #a00; }
-        a { color: #1a73e8; text-decoration: none; }
-        a:hover { text-decoration: underline; }
-    </style>
-</head>
-<body>
-    <h1>Status do Coletor</h1>
+@extends('layouts.app')
 
-    <div class="card">
-        <p><strong>Arquivo de log:</strong> {{ $logPath }}</p>
-        <p><strong>Última execução:</strong> {{ $lastRun ?? 'Nenhuma execução registrada' }}</p>
-        <p><strong>Status:</strong>
-            <span class="{{ str_contains($lastStatus, 'Falha') ? 'status-error' : 'status-ok' }}">
-                {{ $lastStatus }}
-            </span>
-        </p>
+@section('title', 'Status do Coletor')
+
+@section('content')
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h4 class="mb-0 fw-bold d-flex align-items-center gap-2">
+        <i class="bi bi-activity text-dark"></i> Status do Coletor
+    </h4>
+    <a href="{{ url('/') }}" class="btn btn-outline-secondary btn-sm">
+        <i class="bi bi-arrow-left me-1"></i> Voltar
+    </a>
+</div>
+
+<div class="card mb-4">
+    <div class="card-body">
+        <div class="row g-3">
+            <div class="col-md-4 d-flex align-items-center gap-2">
+                <i class="bi bi-file-text fs-4 text-secondary"></i>
+                <div>
+                    <div class="small text-muted">Arquivo de log</div>
+                    <div class="fw-semibold">{{ $logPath }}</div>
+                </div>
+            </div>
+            <div class="col-md-4 d-flex align-items-center gap-2">
+                <i class="bi bi-clock-history fs-4 text-secondary"></i>
+                <div>
+                    <div class="small text-muted">Última execução</div>
+                    <div class="fw-semibold">{{ $lastRun ?? 'Nenhuma execução registrada' }}</div>
+                </div>
+            </div>
+            <div class="col-md-4 d-flex align-items-center gap-2">
+                @if(str_contains($lastStatus, 'Falha'))
+                    <i class="bi bi-x-circle-fill fs-4 text-danger"></i>
+                @else
+                    <i class="bi bi-check-circle-fill fs-4 text-success"></i>
+                @endif
+                <div>
+                    <div class="small text-muted">Status</div>
+                    <div class="fw-semibold {{ str_contains($lastStatus, 'Falha') ? 'text-danger' : 'text-success' }}">
+                        {{ $lastStatus }}
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
+</div>
 
-    @if(empty($log))
-        <div class="notice">
-            <p>Nenhum log encontrado ainda. Execute o coletor para gerar o arquivo.</p>
+@if(empty($log))
+    <div class="card p-4 text-center text-muted">
+        <i class="bi bi-journal-x fs-1 mb-2"></i>
+        <p class="mb-0">Nenhum log encontrado. Execute o coletor para gerar o arquivo.</p>
+    </div>
+@else
+    <div class="card">
+        <div class="card-header bg-dark text-white d-flex align-items-center gap-2">
+            <i class="bi bi-terminal"></i> Log (últimas 50 linhas)
         </div>
-    @else
-        <div class="card">
-            <p>Últimas linhas do log (máx. 50):</p>
-            <pre>
-@foreach($log as $line)
-{{ $line }}
-@endforeach
-            </pre>
+        <div class="card-body p-0">
+            <pre class="mb-0 p-3 bg-light" style="max-height:400px; overflow-y:auto; font-size:.85rem;">@foreach($log as $line){{ $line }}
+@endforeach</pre>
         </div>
-    @endif
-
-    <p><a href="{{ url('/') }}">← Voltar para a lista de impressoras</a></p>
-</body>
-</html>
+    </div>
+@endif
+@endsection
