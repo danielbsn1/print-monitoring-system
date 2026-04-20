@@ -1,75 +1,99 @@
-Sobre o projeto
+#  Print Monitoring System
 
-O Contador de Impressão foi desenvolvido para auxiliar no controle da quantidade de páginas impressas, ajudando na gestão de custos e monitoramento de uso.
+Sistema completo para monitoramento e análise de impressões em rede, com coleta automática de dados via script Python, integração com API própria e gerenciamento centralizado.
 
-O projeto utiliza Docker, permitindo que qualquer pessoa execute o sistema sem precisar configurar manualmente o ambiente.
+---
 
- Funcionalidades
-Registro de impressões
-Contador acumulado
-Organização de dados
-Ambiente isolado com Docker
-Fácil execução e setup rápido
-Tecnologias utilizadas
-PHP / Laravel (ajuste se precisar)
-MySQL (ou outro banco, se usar)
+##  Sobre o projeto
 
-Docker
-Docker Compose
- Rodando com Docker
-Pré-requisitos
-Docker instalado
-Docker Compose instalado
- Passo a passo
-Clone o repositório:
-git clone https://github.com/danielbsn1/Contador-impressao.git
-Acesse a pasta:
-cd Contador-impressao
-Suba os containers:
+Este sistema foi desenvolvido para resolver um problema comum em ambientes corporativos:
+o controle e monitoramento de impressões realizadas em múltiplas impressoras.
+
+A aplicação coleta dados diretamente das impressoras utilizando um script em Python, envia essas informações para uma API e disponibiliza um painel administrativo para análise e gestão.
+
+---
+
+##  Funcionalidades
+
+*  Monitoramento de impressões em tempo real
+*  Relatórios de uso (diário, semanal, mensal)
+*  Integração com múltiplas impressoras
+*  API própria para comunicação entre serviços
+*  Sistema preparado para autenticação
+*  Estrutura pronta para deploy com Docker
+
+---
+
+##  Arquitetura do sistema
+
+O sistema é dividido em três partes principais:
+
+1. **Coletor (Python)**
+
+   * Script responsável por acessar as impressoras
+   * Coleta dados como número de páginas impressas
+   * Envia informações para a API
+
+2. **API (Laravel)**
+
+   * Recebe e processa os dados
+   * Armazena no banco de dados
+   * Disponibiliza endpoints para consumo
+
+3. **Painel Administrativo**
+
+   * Interface para visualização dos dados
+   * Controle e análise das impressões
+
+---
+
+##  Tecnologias utilizadas
+
+* Python
+* Laravel (PHP)
+* MySQL / PostgreSQL
+* Docker
+* REST API
+
+---
+
+##  Como executar o projeto
+
+```bash
+# Clonar repositório
+git clone https://github.com/seu-usuario/seu-repo.git
+
+# Subir containers
 docker-compose up -d
-Acesse no navegador:
-http://localhost
+
+# Acessar aplicação
+http://localhost:8000
+```
+
+---
 
 
-Comandos úteis
+##  Diferenciais
 
-Parar containers:
+* Integração direta com hardware (impressoras)
+* Arquitetura distribuída (script + API + backend)
+* Projeto voltado para ambiente real corporativo
+* Uso de Docker para padronização de ambiente
 
-docker-compose down
+---
 
-Ver logs:
+##  Melhorias futuras
 
-docker-compose logs -f
+* Dashboard com gráficos (React)
+* Sistema de autenticação completo (JWT)
+* Multi-tenant (várias empresas)
+* Alertas automáticos de uso
 
-Acessar container:
+---
 
-docker exec -it nome_do_container bash
- Estrutura do projeto
-Contador-impressao/
-│
-├── docker/             # Configurações do Docker
-├── docker-compose.yml
-├── src/                # Código da aplicação
-├── database/           # Banco de dados
-└── README.md
- Diferencial do projeto
-
- Ambiente totalmente containerizado
- Fácil de rodar em qualquer máquina
- Ideal para aprendizado de Docker + Backend
-
- Objetivo
-
-Projeto desenvolvido com foco em prática de:
-
-Containerização com Docker
-Desenvolvimento backend
-Organização de aplicações reais
-
+##  Autor
 
 Daniel Batista
- https://github.com/danielbsn1
+Desenvolvedor Backend 
 
- Licença
-
-MIT
+---
