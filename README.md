@@ -1,4 +1,4 @@
-# 🖨️ Contador de Impressão
+#  print-monitoring-system
 
 Sistema web para monitoramento automático de contadores de impressoras em rede via **SNMP**, com armazenamento, visualização e histórico de leituras.
 
