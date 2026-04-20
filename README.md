@@ -157,6 +157,10 @@ docker-compose --profile coletor up coletor
 | GET    | `/api/leituras`    | Lista todas as leituras    |
 | POST   | `/api/leitura`     | Registra uma nova leitura  |
 
+##  Autenticação
+
+A API utiliza autenticação baseada em sessão (Laravel), com proteção CSRF para requisições web.
+
 ### Exemplo de payload — POST `/api/leitura`
 
 ```json
@@ -209,6 +213,13 @@ docker-compose --profile coletor up coletor
 - Senhas armazenadas com `bcrypt`
 - Tokens CSRF em todos os formulários
 - Validação de dados em todos os endpoints
+
+- ##  Aprendizados
+
+- Integração com dispositivos via SNMP
+- Arquitetura baseada em serviços (coletor + API)
+- Containerização com Docker
+- Estruturação de APIs RESTful
 
 ## Autor
 
