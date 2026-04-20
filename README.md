@@ -1,99 +1,209 @@
-#  Print Monitoring System
+#  print-monitoring-system
 
-Sistema completo para monitoramento e análise de impressões em rede, com coleta automática de dados via script Python, integração com API própria e gerenciamento centralizado.
-
----
-
-##  Sobre o projeto
-
-Este sistema foi desenvolvido para resolver um problema comum em ambientes corporativos:
-o controle e monitoramento de impressões realizadas em múltiplas impressoras.
-
-A aplicação coleta dados diretamente das impressoras utilizando um script em Python, envia essas informações para uma API e disponibiliza um painel administrativo para análise e gestão.
+Sistema web para monitoramento automático de contadores de impressoras em rede via **SNMP**, com armazenamento, visualização e histórico de leituras.
 
 ---
 
-##  Funcionalidades
+## Funcionalidades
 
-*  Monitoramento de impressões em tempo real
-*  Relatórios de uso (diário, semanal, mensal)
-*  Integração com múltiplas impressoras
-*  API própria para comunicação entre serviços
-*  Sistema preparado para autenticação
-*  Estrutura pronta para deploy com Docker
-
----
-
-##  Arquitetura do sistema
-
-O sistema é dividido em três partes principais:
-
-1. **Coletor (Python)**
-
-   * Script responsável por acessar as impressoras
-   * Coleta dados como número de páginas impressas
-   * Envia informações para a API
-
-2. **API (Laravel)**
-
-   * Recebe e processa os dados
-   * Armazena no banco de dados
-   * Disponibiliza endpoints para consumo
-
-3. **Painel Administrativo**
-
-   * Interface para visualização dos dados
-   * Controle e análise das impressões
+- Autenticação de usuários (login/logout)
+- Cadastro e gerenciamento de impressoras
+- Coleta automática de contadores via SNMP
+- Cálculo automático de consumo entre leituras
+- Histórico de leituras por impressora
+- Ambiente completo via Docker
+- Painel de status do coletor com logs em tempo real
 
 ---
 
-##  Tecnologias utilizadas
+## Tecnologias
 
-* Python
-* Laravel (PHP)
-* MySQL / PostgreSQL
-* Docker
-* REST API
+| Camada         | Tecnologia                    |
+| -------------- | ----------------------------- |
+| Backend        | Laravel 11 (PHP 8.2)          |
+| Frontend       | Bootstrap 5 + Bootstrap Icons |
+| Banco de dados | MySQL 8.0                     |
+| Servidor web   | Nginx                         |
+| Coleta SNMP    | Python 3.11 + pysnmp          |
+| Infraestrutura | Docker + Docker Compose       |
 
 ---
 
-##  Como executar o projeto
+## Instalação com Docker
+
+### Pré-requisitos
+
+- [Docker](https://docs.docker.com/get-docker/)
+- [Docker Compose](https://docs.docker.com/compose/install/)
+
+### Passo a passo
+
+**1. Clone o repositório**
 
 ```bash
-# Clonar repositório
-git clone https://github.com/seu-usuario/seu-repo.git
+git clone https://github.com/danielbsn1/Contador-impressao.git
+cd Contador-impressao
+```
 
-# Subir containers
+**2. Configure o ambiente**
+
+```bash
+cp .env.example .env
+```
+
+Edite o `.env` com suas configurações:
+
+```env
+APP_NAME="Contador de Impressão"
+APP_URL=http://localhost:8001
+
+DB_HOST=db
+DB_PORT=3306
+DB_DATABASE=contador_impressao
+DB_USERNAME=laravel
+DB_PASSWORD=secret
+```
+
+**3. Suba os containers**
+
+```bash
 docker-compose up -d
+```
 
-# Acessar aplicação
-http://localhost:8000
+**4. Gere a chave da aplicação**
+
+```bash
+docker exec laravel_app php artisan key:generate
+```
+
+**5. Rode as migrations**
+
+```bash
+docker exec laravel_app php artisan migrate
+```
+
+**6. Crie o primeiro usuário**
+
+```bash
+docker exec -it laravel_app php artisan tinker
+```
+
+```php
+\App\Models\User::create([
+    'name' => 'Seu Nome',
+    'email' => 'seu@email.com',
+    'password' => bcrypt('sua_senha'),
+]);
+```
+
+**7. Acesse o sistema**
+
+| Serviço    | URL                   |
+| ---------- | --------------------- |
+| Sistema    | http://localhost:8001 |
+| phpMyAdmin | http://localhost:8080 |
+
+---
+
+## Coletor Python (SNMP)
+
+O script coleta os contadores das impressoras via SNMP e envia para a API do Laravel.
+
+### Configuração
+
+```bash
+pip install pysnmp==4.4.12 pyasn1==0.4.8 requests
+```
+
+### Execução manual
+
+```bash
+python script/coletor.py
+```
+
+### Via Docker
+
+```bash
+docker-compose --profile coletor up coletor
+```
+
+### OID utilizado
+
+```
+1.3.6.1.2.1.43.10.2.1.4.1.1
+```
+
+> Community SNMP padrão: `public` — certifique-se que está habilitado nas impressoras.
+
+---
+
+## API
+
+| Método | Endpoint           | Descrição                  |
+| ------ | ------------------ | -------------------------- |
+| GET    | `/api/impressoras` | Lista todas as impressoras |
+| GET    | `/api/leituras`    | Lista todas as leituras    |
+| POST   | `/api/leitura`     | Registra uma nova leitura  |
+
+### Exemplo de payload — POST `/api/leitura`
+
+```json
+{
+    "impressora_id": 1,
+    "contador": 15234
+}
 ```
 
 ---
 
+## Estrutura do Projeto
 
-##  Diferenciais
+```
+├── app/
+│   ├── Http/Controllers/
+│   │   ├── ImpressoraController.php
+│   │   ├── LeituraController.php
+│   │   └── Auth/
+│   └── Models/
+│       ├── Impressora.php
+│       └── Leitura.php
+├── docker/
+│   └── nginx/
+│       └── default.conf
+├── script/
+│   └── coletor.py
+├── Dockerfile
+├── Dockerfile.python
+└── docker-compose.yml
+```
 
-* Integração direta com hardware (impressoras)
-* Arquitetura distribuída (script + API + backend)
-* Projeto voltado para ambiente real corporativo
-* Uso de Docker para padronização de ambiente
+---
+
+## Variáveis de Ambiente
+
+| Variável      | Descrição                           | Padrão                  |
+| ------------- | ----------------------------------- | ----------------------- |
+| `DB_HOST`     | Host do banco (usar `db` no Docker) | `db`                    |
+| `DB_DATABASE` | Nome do banco                       | `contador_impressao`    |
+| `DB_USERNAME` | Usuário do banco                    | `laravel`               |
+| `DB_PASSWORD` | Senha do banco                      | `secret`                |
+| `APP_URL`     | URL da aplicação                    | `http://localhost:8001` |
 
 ---
 
-##  Melhorias futuras
+## Segurança
 
-* Dashboard com gráficos (React)
-* Sistema de autenticação completo (JWT)
-* Multi-tenant (várias empresas)
-* Alertas automáticos de uso
+- Todas as rotas são protegidas por autenticação
+- Senhas armazenadas com `bcrypt`
+- Tokens CSRF em todos os formulários
+- Validação de dados em todos os endpoints
 
----
+## Autor
 
-##  Autor
-
-Daniel Batista
-Desenvolvedor Backend 
+Desenvolvido por **Daniel**
 
 ---
+
+## Licença
+
+Este projeto é livre para uso e modificação.
