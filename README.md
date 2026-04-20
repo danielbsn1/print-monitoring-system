@@ -103,6 +103,18 @@ docker exec -it laravel_app php artisan tinker
 | Sistema    | http://localhost:8001 |
 | phpMyAdmin | http://localhost:8080 |
 
+
+ Demonstração
+
+###  Painel principal
+Visão geral do sistema com métricas principais como total de impressoras, páginas impressas e consumo.
+<img width="1461" height="751" alt="image" src="https://github.com/user-attachments/assets/676b1334-9a6b-478b-b48e-e9267d4e85f9" />
+
+ Status do coletor
+Monitoramento do coletor responsável pela leitura via SNMP, incluindo logs e status de execução.
+<img width="1452" height="816" alt="image" src="https://github.com/user-attachments/assets/30fed64b-a4d3-4d1e-8679-8ee689ae857e" />
+
+
 ---
 
 ## Coletor Python (SNMP)
