@@ -33,12 +33,13 @@ class LeituraController extends Controller
             'data_leitura'  => 'nullable|date',
         ]);
 
-        $anterior = Leitura::where('impressora_id', $validated['impressora_id'])
+        $impressoraId = (int) $validated['impressora_id'];
+        $anterior = Leitura::where('impressora_id', $impressoraId)
             ->latest('id')
             ->value('contador');
 
         Leitura::create([
-            'impressora_id'     => $validated['impressora_id'],
+            'impressora_id'     => $impressoraId,
             'contador'          => $validated['contador'],
             'contador_anterior' => $anterior,
             'data_leitura'      => $validated['data_leitura'] ?? now(),

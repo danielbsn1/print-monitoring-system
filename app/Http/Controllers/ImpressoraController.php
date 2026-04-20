@@ -69,7 +69,7 @@ class ImpressoraController extends Controller
             'ip'     => 'required|ip',
         ]);
 
-        Impressora::findOrFail($id)->update($request->only('nome', 'modelo', 'serie', 'ip'));
+        Impressora::findOrFail((int) $id)->update($request->only('nome', 'modelo', 'serie', 'ip'));
 
         return redirect()->route('impressoras.index')->with('success', 'Impressora atualizada com sucesso!');
     }
