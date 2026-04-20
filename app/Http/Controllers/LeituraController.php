@@ -10,62 +10,40 @@ class LeituraController extends Controller
 {
     public function index()
     {
-     $stats = Impressora::all();
+        $stats = Impressora::with(['leituras' => function ($q) {
+            $q->latest('id')->take(2);
+        }])->get();
 
-    foreach ($stats as $imp) {
-        $leituras = Leitura::where('impressora_id', $imp->id)
-            ->orderBy('created_at', 'desc')
-            ->take(2)
-            ->get();
-
-        if ($leituras->count() == 2) {
-            $consumo = $leituras[0]->contador - $leituras[1]->contador;
-        } else {
-            $consumo = 0;
+        foreach ($stats as $imp) {
+            $leituras = $imp->leituras;
+            $imp->consumo = max(0,
+                optional($leituras->get(0))->contador -
+                optional($leituras->get(1))->contador
+            );
         }
 
-        // adiciona dinamicamente
-        $imp->consumo = max(0, $consumo);
+        return view('impressora.index', compact('stats'));
     }
 
-    return view('impressoras', compact('stats'));
-
-}
-
-    public function create()
-    {
-        return view('leitura.create');
-    }
     public function store(Request $request)
     {
-        $request->validate([
-            'impressora_id' => $request->impressora_id,
-            'contador' => $request->contador,
-            'data_leitura' => $request->data_leitura,
+        $validated = $request->validate([
+            'impressora_id' => 'required|integer|exists:impressoras,id',
+            'contador'      => 'required|integer|min:0',
+            'data_leitura'  => 'nullable|date',
         ]);
-        return response()->json(['ok' => true]);
-        
-    }
-    public function show($id)
-    {
-        return view('leitura.show', compact('id'));
-    }
-    public function edit($id)
-    {
-        return view('leitura.edit', compact('id'));
 
-}
-   public function update(Request $request, $id)
-    {
-        $request->validate([
-            'impressora_id' => 'required|exists:impressoras,id',
-            'contador' => 'required|integer',
+        $anterior = Leitura::where('impressora_id', $validated['impressora_id'])
+            ->latest('id')
+            ->value('contador');
+
+        Leitura::create([
+            'impressora_id'     => $validated['impressora_id'],
+            'contador'          => $validated['contador'],
+            'contador_anterior' => $anterior,
+            'data_leitura'      => $validated['data_leitura'] ?? now(),
         ]);
-        return redirect()->route('leitura.index')->with('success','Leitura atualizada com sucesso!');
-    }
-    public function destroy($id)
-    {
-        return redirect()->route('leitura.index')->with('success','Leitura deletada com sucesso!');
-    }
 
+        return redirect()->route('impressoras.index')->with('success', 'Leitura registrada com sucesso!');
+    }
 }

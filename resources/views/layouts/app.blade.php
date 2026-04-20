@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', 'Contador de Impressão')</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
@@ -22,13 +23,22 @@
                 <i class="bi bi-printer-fill"></i>
                 <span>Contador de Impressão</span>
             </a>
-            <div class="d-flex gap-3">
-                <a href="{{ url('/') }}" class="text-white text-decoration-none d-flex align-items-center gap-1">
-                    <i class="bi bi-house-fill"></i> Início
+            <div class="d-flex gap-3 align-items-center">
+                <a href="{{ route('impressoras.index') }}" class="text-white text-decoration-none d-flex align-items-center gap-1">
+                    <i class="bi bi-printer-fill"></i> Impressoras
+                </a>
+                <a href="{{ route('impressoras.create') }}" class="text-white text-decoration-none d-flex align-items-center gap-1">
+                    <i class="bi bi-plus-circle"></i> Nova
                 </a>
                 <a href="{{ url('/status') }}" class="text-white text-decoration-none d-flex align-items-center gap-1">
                     <i class="bi bi-activity"></i> Status
                 </a>
+                <form method="POST" action="{{ route('logout') }}" class="mb-0">
+                    @csrf
+                    <button type="submit" class="btn btn-sm btn-outline-light d-flex align-items-center gap-1">
+                        <i class="bi bi-box-arrow-right"></i> Sair
+                    </button>
+                </form>
             </div>
         </div>
     </nav>

@@ -4,13 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Impressora;
-use App\Models\Leitura;
 
 class ImpressoraController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
         $stats = Impressora::with(['leituras' => function ($query) {
@@ -19,8 +15,7 @@ class ImpressoraController extends Controller
 
         foreach ($stats as $imp) {
             $leituras = $imp->leituras;
-
-            $imp->contador_atual = optional($leituras->get(0))->contador;
+            $imp->contador_atual    = optional($leituras->get(0))->contador;
             $imp->contador_anterior = optional($leituras->get(1))->contador;
             $imp->consumo = max(0,
                 optional($leituras->get(0))->contador -
@@ -31,69 +26,57 @@ class ImpressoraController extends Controller
         return view('impressora.index', compact('stats'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
-        return view('');
+        return view('impressora.create');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
         $request->validate([
-            'nome' => 'required',
-            'modelo' => 'required',
-            'serie' => 'required',
-            'ip' => 'required',
+            'nome'   => 'required|string|max:100',
+            'modelo' => 'required|string|max:100',
+            'serie'  => 'required|string|max:100',
+            'ip'     => 'required|ip',
         ]);
+
+        Impressora::create($request->only('nome', 'modelo', 'serie', 'ip'));
+
+        return redirect()->route('impressoras.index')->with('success', 'Impressora cadastrada com sucesso!');
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(string $id)
     {
-        $impressora = Impressora::find($id);
+        $impressora = Impressora::with(['leituras' => function ($q) {
+            $q->latest('id')->take(30);
+        }])->findOrFail($id);
+
         return view('impressora.show', compact('impressora'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(string $id)
     {
-        $impressora = Impressora::find($id);
+        $impressora = Impressora::findOrFail($id);
         return view('impressora.edit', compact('impressora'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, string $id)
     {
         $request->validate([
-            'nome' => 'required',
-            'modelo' => 'required',
-            'serie' => 'required',
-            'ip' => 'required',
+            'nome'   => 'required|string|max:100',
+            'modelo' => 'required|string|max:100',
+            'serie'  => 'required|string|max:100',
+            'ip'     => 'required|ip',
         ]);
 
-        $impressora = Impressora::find($id);
-        $impressora->update($request->all());
-        return redirect()->route('impressora.index')->with('success', 'Impressora atualizada com sucesso!');
+        Impressora::findOrFail($id)->update($request->only('nome', 'modelo', 'serie', 'ip'));
+
+        return redirect()->route('impressoras.index')->with('success', 'Impressora atualizada com sucesso!');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(string $id)
     {
-        $impressora = Impressora::find($id);
-        $impressora->delete();
-        return redirect()->route('impressora.index')->with('success', 'Impressora excluída com sucesso!');
+        Impressora::findOrFail($id)->delete();
+        return redirect()->route('impressoras.index')->with('success', 'Impressora excluída com sucesso!');
     }
 }
